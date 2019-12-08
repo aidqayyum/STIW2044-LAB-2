@@ -95,7 +95,7 @@ class _TabScreen4State extends State<TabScreen4> {
                                         image: new DecorationImage(
                                             fit: BoxFit.cover,
                                             image: new NetworkImage(
-                                                "http://itschizo.com/aidil_qayyum/etrash/profile/${widget.user.email}.jpg?dummy=${(number)}'")))),
+                                                "http://itschizo.com/aidil_qayyum/etrash/profile/${widget.user.email}.jpg?dummy=${(number)}")))),
                               ),
                               SizedBox(height: 30),
                               Container(

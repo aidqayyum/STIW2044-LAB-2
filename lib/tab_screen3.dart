@@ -284,7 +284,7 @@ class _TabScreen3State extends State<TabScreen3> {
     String urlLoadJobs = "http://itschizo.com/aidil_qayyum/etrash/php/load_accepted_items.php";
     ProgressDialog pr = new ProgressDialog(context,
         type: ProgressDialogType.Normal, isDismissible: false);
-    pr.style(message: "Loading All Accepted Jobs");
+    pr.style(message: "Loading All Accepted Items");
     pr.show();
     http.post(urlLoadJobs, body: {
       "email": widget.user.email ?? "notavail",
@@ -307,7 +307,7 @@ class _TabScreen3State extends State<TabScreen3> {
 
   Future init() async {
     if (widget.user.email=="user@noregister"){
-      Toast.show("Please register to view accepted Jobs", context,
+      Toast.show("Please register to view accepted Items", context,
           duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
       return;
     }else{
