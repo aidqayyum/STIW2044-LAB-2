@@ -1,18 +1,16 @@
+import 'package:e_trash/eTrashdetail.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:e_trash/job.dart';
-import 'package:e_trash/jobdetail.dart';
+import 'package:e_trash/etrash.dart';
 import 'dart:convert';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/services.dart';
-import 'package:e_trash/mainscreen.dart';
 import 'package:e_trash/user.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
 import 'SlideRightRoute.dart';
-//import 'enterexit.dart';
 
 double perpage = 1;
 
@@ -196,22 +194,22 @@ class _TabScreenState extends State<TabScreen> {
                       child: Card(
                         elevation: 2,
                         child: InkWell(
-                          onTap: () => _onJobDetail(
-                            data[index]['jobid'],
-                            data[index]['jobprice'],
-                            data[index]['jobdesc'],
-                            data[index]['jobowner'],
-                            data[index]['jobimage'],
-                            data[index]['jobtime'],
-                            data[index]['jobtitle'],
-                            data[index]['joblatitude'],
-                            data[index]['joblongitude'],
-                            data[index]['jobrating'],
+                          onTap: () => _onETrashDetail(
+                            data[index]['etid'],
+                            data[index]['etprice'],
+                            data[index]['etdesc'],
+                            data[index]['etowner'],
+                            data[index]['etimage'],
+                            data[index]['ettime'],
+                            data[index]['ettitle'],
+                            data[index]['etlatitude'],
+                            data[index]['etlongitude'],
+                            data[index]['etrating'],
                             widget.user.radius,
                             widget.user.name,
                             widget.user.credit,
                           ),
-                          onLongPress: _onJobDelete,
+                          onLongPress: _onETrashDelete,
                           child: Padding(
                             padding: const EdgeInsets.all(2.0),
                             child: Row(
@@ -225,14 +223,14 @@ class _TabScreenState extends State<TabScreen> {
                                       image: DecorationImage(
                                     fit: BoxFit.fill,
                                     image: NetworkImage(
-                                    "http://itschizo.com/aidil_qayyum/etrash/images/${data[index]['jobimage']}.jpg"
+                                    "http://itschizo.com/aidil_qayyum/etrash/images/${data[index]['etimage']}.jpg"
                                   )))),
                                 Expanded(
                                   child: Container(
                                     child: Column(
                                       children: <Widget>[
                                         Text(
-                                            data[index]['jobtitle']
+                                            data[index]['ettitle']
                                                 .toString()
                                                 .toUpperCase(),
                                             style: TextStyle(
@@ -241,7 +239,8 @@ class _TabScreenState extends State<TabScreen> {
                                         RatingBar(
                                           itemCount: 5,
                                           itemSize: 12,
-                                          initialRating: double.parse(data[index]['jobrating']
+                                          initialRating: double.parse(
+                                            data[index]['etrating']
                                                 .toString()),
                                           itemPadding: EdgeInsets.symmetric(
                                               horizontal: 2.0),
@@ -253,11 +252,11 @@ class _TabScreenState extends State<TabScreen> {
                                         SizedBox(
                                           height: 5,
                                         ),
-                                        Text("RM " + data[index]['jobprice']),
+                                        Text("RM " + data[index]['etprice']),
                                         SizedBox(
                                           height: 5,
                                         ),
-                                        Text(data[index]['jobtime']),
+                                        Text(data[index]['ettime']),
                                       ],
                                     ),
                                   ),
@@ -295,8 +294,8 @@ class _TabScreenState extends State<TabScreen> {
 
       setState(() {
         _currentAddress =
-            "${place.name},${place.locality}, ${place.postalCode}, ${place.country}";
-        init(); //load data from database into list array 'data'
+            "${place.name},${place.locality},${place.postalCode},${place.country}";
+        init();
       });
     } catch (e) {
       print(e);
@@ -304,20 +303,20 @@ class _TabScreenState extends State<TabScreen> {
   }
 
   Future<String> makeRequest() async {
-    String urlLoadJobs = "http://itschizo.com/aidil_qayyum/etrash/php/load_items.php";
+    String urlLoadETs = "http://itschizo.com/aidil_qayyum/etrash/php/load_items.php";
     ProgressDialog pr = new ProgressDialog(context,
         type: ProgressDialogType.Normal, isDismissible: false);
-    pr.style(message: "Loading Jobs");
+    pr.style(message: "Loading Items");
     pr.show();
-    http.post(urlLoadJobs, body: {
+    http.post(urlLoadETs, body: {
       "email": widget.user.email ?? "notavail",
       "latitude": _currentPosition.latitude.toString(),
       "longitude": _currentPosition.longitude.toString(),
-      "radius": widget.user.radius ?? "10",
+      "radius": widget.user.radius ?? "15",
     }).then((res) {
       setState(() {
         var extractdata = json.decode(res.body);
-        data = extractdata["jobs"];
+        data = extractdata["etrash"];
         perpage = (data.length / 10);
         print("data");
         print(data);
@@ -332,7 +331,6 @@ class _TabScreenState extends State<TabScreen> {
 
   Future init() async {
     this.makeRequest();
-    //_getCurrentLocation();
   }
 
   Future<Null> refreshList() async {
@@ -341,41 +339,38 @@ class _TabScreenState extends State<TabScreen> {
     return null;
   }
 
-  
+  void _onETrashDelete() {
+    print("Delete");
+  }
 
-  void _onJobDetail(
-      String jobid,
-      String jobprice,
-      String jobdesc,
-      String jobowner,
-      String jobimage,
-      String jobtime,
-      String jobtitle,
-      String joblatitude,
-      String joblongitude,
-      String jobrating,
+  void _onETrashDetail(
+      String etid,
+      String etprice,
+      String etdesc,
+      String etowner,
+      String etimage,
+      String ettime,
+      String ettitle,
+      String etlatitude,
+      String etlongitude,
+      String etrating,
       String email,
       String name,
       String credit) {
-    Job job = new Job(
-        jobid: jobid,
-        jobtitle: jobtitle,
-        jobowner: jobowner,
-        jobdes: jobdesc,
-        jobprice: jobprice,
-        jobtime: jobtime,
-        jobimage: jobimage,
-        jobworker: null,
-        joblat: joblatitude,
-        joblon: joblongitude,
-        jobrating:jobrating );
-    //print(data);
-    
-    Navigator.push(context, SlideRightRoute(page: JobDetail(job: job, user: widget.user)));
-  }
+        Etrash etrash = new Etrash(
+        etid: etid,
+        ettitle: ettitle,
+        etowner: etowner,
+        etdesc: etdesc,
+        etprice: etprice,
+        ettime: ettime,
+        etimage: etimage,
+        etworker: null,
+        etlat: etlatitude,
+        etlon: etlongitude,
+        etrating:etrating );
+    print(data);
 
-  void _onJobDelete() {
-    print("Delete");
+    Navigator.push(context, SlideRightRoute(page: EtrashDetail(etrash: etrash, user: widget.user)));
   }
 }
-

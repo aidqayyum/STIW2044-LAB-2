@@ -57,9 +57,13 @@ class _TabScreen3State extends State<TabScreen3> {
                         child: Column(
                           children: <Widget>[
                             Stack(children: <Widget>[
-                              Image.asset(
+                              Container(
+                              child: Image.asset(
                                 "assets/images/back.png",
                                 fit: BoxFit.fitWidth,
+                                height: 200,
+                                width: 500,
+                              ),
                               ),
                               Column(
                                 children: <Widget>[
@@ -69,7 +73,7 @@ class _TabScreen3State extends State<TabScreen3> {
                                   Center(
                                     child: Text("E-Trash",
                                         style: TextStyle(
-                                            fontSize: 30,
+                                            fontSize: 24,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.black)),
                                   ),
@@ -201,14 +205,14 @@ class _TabScreen3State extends State<TabScreen3> {
                                       image: DecorationImage(
                                     fit: BoxFit.fill,
                                     image: NetworkImage(
-                                    "http://itschizo.com/aidil_qayyum/etrash/images/${data[index]['jobimage']}.jpg"
+                                    "http://itschizo.com/aidil_qayyum/etrash/images/${data[index]['etimage']}.jpg"
                                   )))),
                                 Expanded(
                                   child: Container(
                                     child: Column(
                                       children: <Widget>[
                                         Text(
-                                            data[index]['jobtitle']
+                                            data[index]['ettitle']
                                                 .toString()
                                                 .toUpperCase(),
                                             style: TextStyle(
@@ -218,23 +222,23 @@ class _TabScreen3State extends State<TabScreen3> {
                                           itemCount: 5,
                                           itemSize: 12,
                                           initialRating: double.parse(
-                                              data[index]['jobrating']
+                                              data[index]['etrating']
                                                   .toString()),
                                           itemPadding: EdgeInsets.symmetric(
                                               horizontal: 2.0),
                                           itemBuilder: (context, _) => Icon(
                                             Icons.star,
-                                            color: Colors.amber,
+                                            color: Colors.orangeAccent,
                                           ),
                                         ),
                                         SizedBox(
                                           height: 5,
                                         ),
-                                        Text("RM " + data[index]['jobprice']),
+                                        Text("RM " + data[index]['etprice']),
                                         SizedBox(
                                           height: 5,
                                         ),
-                                        Text(data[index]['jobtime']),
+                                        Text(data[index]['ettime']),
                                       ],
                                     ),
                                   ),
@@ -281,18 +285,18 @@ class _TabScreen3State extends State<TabScreen3> {
   }
 
   Future<String> makeRequest() async {
-    String urlLoadJobs = "http://itschizo.com/aidil_qayyum/etrash/php/load_accepted_items.php";
+    String urlLoadETrash = "http://itschizo.com/aidil_qayyum/etrash/php/load_accepted_items.php";
     ProgressDialog pr = new ProgressDialog(context,
         type: ProgressDialogType.Normal, isDismissible: false);
     pr.style(message: "Loading All Accepted Items");
     pr.show();
-    http.post(urlLoadJobs, body: {
+    http.post(urlLoadETrash, body: {
       "email": widget.user.email ?? "notavail",
 
     }).then((res) {
       setState(() {
         var extractdata = json.decode(res.body);
-        data = extractdata["jobs"];
+        data = extractdata["etrash"];
         perpage = (data.length / 10);
         print("data");
         print(data);
@@ -307,7 +311,7 @@ class _TabScreen3State extends State<TabScreen3> {
 
   Future init() async {
     if (widget.user.email=="user@noregister"){
-      Toast.show("Please register to view accepted Items", context,
+      Toast.show("Please register to view accepted ETrash", context,
           duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
       return;
     }else{

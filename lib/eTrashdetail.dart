@@ -6,20 +6,20 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:e_trash/user.dart';
 import 'package:toast/toast.dart';
 import 'package:progress_dialog/progress_dialog.dart';
-import 'job.dart';
+import 'etrash.dart';
 import 'mainscreen.dart';
 
-class JobDetail extends StatefulWidget {
-  final Job job;
+class EtrashDetail extends StatefulWidget {
+  final Etrash etrash;
   final User user;
 
-  const JobDetail({Key key, this.job, this.user}) : super(key: key);
+  const EtrashDetail({Key key, this.etrash, this.user}) : super(key: key);
 
   @override
-  _JobDetailState createState() => _JobDetailState();
+  _EtrashDetailState createState() => _EtrashDetailState();
 }
 
-class _JobDetailState extends State<JobDetail> {
+class _EtrashDetailState extends State<EtrashDetail> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
@@ -29,14 +29,14 @@ class _JobDetailState extends State<JobDetail> {
       child: Scaffold(
           resizeToAvoidBottomPadding: false,
           appBar: AppBar(
-            title: Text('JOB DETAILS'),
+            title: Text('ITEMS DETAILS'),
             backgroundColor: Colors.deepOrange,
           ),
           body: SingleChildScrollView(
             child: Container(
               padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
               child: DetailInterface(
-                job: widget.job,
+                etrash: widget.etrash,
                 user: widget.user,
               ),
             ),
@@ -57,9 +57,9 @@ class _JobDetailState extends State<JobDetail> {
 }
 
 class DetailInterface extends StatefulWidget {
-  final Job job;
+  final Etrash etrash;
   final User user;
-  DetailInterface({this.job, this.user});
+  DetailInterface({this.etrash, this.user});
 
   @override
   _DetailInterfaceState createState() => _DetailInterfaceState();
@@ -74,7 +74,7 @@ class _DetailInterfaceState extends State<DetailInterface> {
     super.initState();
     _myLocation = CameraPosition(
       target: LatLng(
-          double.parse(widget.job.joblat), double.parse(widget.job.joblon)),
+          double.parse(widget.etrash.etlat), double.parse(widget.etrash.etlon)),
       zoom: 17,
     );
     print(_myLocation.toString());
@@ -89,18 +89,18 @@ class _DetailInterfaceState extends State<DetailInterface> {
           width: 280,
           height: 200,
           child: Image.network(
-              'http://itschizo.com/aidil_qayyum/etrash/images/${widget.job.jobimage}.jpg',
+              'http://itschizo.com/aidil_qayyum/etrash/images/${widget.etrash.etimage}.jpg',
               fit: BoxFit.fill),
         ),
         SizedBox(
           height: 10,
         ),
-        Text(widget.job.jobtitle.toUpperCase(),
+        Text(widget.etrash.ettitle.toUpperCase(),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
             )),
-        Text(widget.job.jobtime),
+        Text(widget.etrash.ettime),
         Container(
           alignment: Alignment.topLeft,
           child: Column(
@@ -111,17 +111,17 @@ class _DetailInterfaceState extends State<DetailInterface> {
               ),
               Table(children: [
                 TableRow(children: [
-                  Text("Job Description",
+                  Text("Item Description",
                       style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text(widget.job.jobdes),
+                  Text(widget.etrash.etdesc),
                 ]),
                 TableRow(children: [
-                  Text("Job Price",
+                  Text("Item Price",
                       style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text("RM" + widget.job.jobprice),
+                  Text("RM" + widget.etrash.etprice),
                 ]),
                 TableRow(children: [
-                  Text("Job Location",
+                  Text("Item Location",
                       style: TextStyle(fontWeight: FontWeight.bold)),
                   Text("")
                 ]),
@@ -151,7 +151,7 @@ class _DetailInterfaceState extends State<DetailInterface> {
                       borderRadius: BorderRadius.circular(15.0)),
                   height: 40,
                   child: Text(
-                    'ACCEPT JOB',
+                    'ACCEPT ITEM',
                     style: TextStyle(fontSize: 16),
                   ),
                   color: Colors.deepOrangeAccent,
@@ -170,13 +170,13 @@ class _DetailInterfaceState extends State<DetailInterface> {
 
   void _onAcceptJob() {
      if (widget.user.email=="user@noregister"){
-      Toast.show("Please register to view accept jobs", context,
+      Toast.show("Please register to view accept items", context,
           duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
       return;
     }else{
       _showDialog();
     }
-    print("Accept Job");
+    print("Accept Item");
     
   }
 
@@ -192,7 +192,7 @@ class _DetailInterfaceState extends State<DetailInterface> {
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
-          title: new Text("Accept " + widget.job.jobtitle),
+          title: new Text("Accept " + widget.etrash.ettitle),
           content: new Text("Are your sure?"),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
@@ -219,10 +219,10 @@ class _DetailInterfaceState extends State<DetailInterface> {
     String urlLoadJobs = "http://itschizo.com/aidil_qayyum/etrash/php/accept_item.php";
     ProgressDialog pr = new ProgressDialog(context,
         type: ProgressDialogType.Normal, isDismissible: false);
-    pr.style(message: "Accepting Job");
+    pr.style(message: "Accepting Item");
     pr.show();
     http.post(urlLoadJobs, body: {
-      "jobid": widget.job.jobid,
+      "etid": widget.etrash.etid,
       "email": widget.user.email,
       "credit": widget.user.credit,
     }).then((res) {

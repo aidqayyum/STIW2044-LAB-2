@@ -9,6 +9,7 @@ import 'package:toast/toast.dart';
 import 'package:http/http.dart' as http;
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'loginscreen.dart';
 
 String pathAsset = 'assets/images/profile.png';
 String urlUpload = "http://itschizo.com/aidil_qayyum/etrash/php/register_user.php";

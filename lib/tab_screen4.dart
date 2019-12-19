@@ -1,23 +1,23 @@
 import 'dart:io';
 import 'dart:math';
-import 'package:e_trash/payment.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/services.dart';
-import 'package:e_trash/loginscreen.dart';
-import 'package:e_trash/registrationscreen.dart';
-import 'package:e_trash/splashscreen.dart';
-import 'package:e_trash/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:random_string/random_string.dart';
 
-
+import 'package:e_trash/loginscreen.dart';
+import 'package:e_trash/registrationscreen.dart';
+import 'package:e_trash/splashscreen.dart';
+import 'package:e_trash/user.dart';
+import 'package:e_trash/payment.dart';
 
 String urlgetuser = "http://itschizo.com/aidil_qayyum/etrash/php/get_user.php";
 String urluploadImage =
@@ -27,10 +27,10 @@ File _image;
 int number = 0;
 String _value;
 
-
 class TabScreen4 extends StatefulWidget {
   //final String email;
   final User user;
+
   TabScreen4({this.user});
 
   @override
@@ -54,50 +54,75 @@ class _TabScreen4State extends State<TabScreen4> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(statusBarColor: Colors.deepOrange));
-    var materialApp = MaterialApp(
+        SystemUiOverlayStyle(statusBarColor: Colors.orange));
+    return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
           resizeToAvoidBottomPadding: false,
           body: ListView.builder(
-              //Step 6: Count the data
+            //Step 6: Count the data
               itemCount: 5,
+              // ignore: missing_return
               itemBuilder: (context, index) {
                 if (index == 0) {
                   return Container(
                     child: Column(
                       children: <Widget>[
                         Stack(children: <Widget>[
-                          Image.asset(
-                            "assets/images/back.png",
-                            fit: BoxFit.fitWidth,
+                          Container(
+                            height: 360,
+                            width: 450,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image:
+                                AssetImage("assets/images/back.png"),
+                                fit: BoxFit.fitWidth,
+                                colorFilter: new ColorFilter.mode(
+                                    Colors.black.withOpacity(0.10),
+                                    BlendMode.dstATop),
+                              ),
+                            ),
                           ),
                           Column(
                             children: <Widget>[
+                              SizedBox(height: 30),
                               Center(
-                                child: Text("E-Trash",
+                                child: Text("E-TRASH",
                                     style: TextStyle(
-                                        fontSize: 30,
+                                        fontSize: 40,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.black)),
+                                        color: Colors.deepOrange)),
                               ),
                               SizedBox(
-                                height: 5,
+                                height: 30,
                               ),
                               GestureDetector(
                                 onTap: _takePicture,
                                 child: Container(
-                                    width: 150.0,
-                                    height: 150.0,
+                                    width: 180.0,
+                                    height: 180.0,
                                     decoration: new BoxDecoration(
                                         shape: BoxShape.circle,
                                         border: Border.all(color: Colors.white),
                                         image: new DecorationImage(
                                             fit: BoxFit.cover,
                                             image: new NetworkImage(
-                                                "http://itschizo.com/aidil_qayyum/etrash/profile/${widget.user.email}.jpg?dummy=${(number)}")))),
+                                                "http://itschizo.com/aidil_qayyum/etrash/profile/${widget.user.email}.jpg?dummy=${(number)}'")))),
                               ),
-                              SizedBox(height: 30),
+                               SizedBox(
+                                height: 5,
+                              ),
+                              Container(
+                                color: Colors.deepOrange,
+                                child: Center(
+                                  child: Text("",
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white)),
+                                ),
+                              ),
+                              SizedBox(height: 10),
                               Container(
                                 child: Text(
                                   widget.user.name?.toUpperCase() ??
@@ -123,7 +148,7 @@ class _TabScreen4State extends State<TabScreen4> {
                                       Icon(
                                         Icons.phone_android,
                                       ),
-                                      Text(widget.user.phone??
+                                      Text(widget.user.phone ??
                                           'not registered'),
                                     ],
                                   ),
@@ -252,7 +277,7 @@ class _TabScreen4State extends State<TabScreen4> {
                         ),
                         MaterialButton(
                           onPressed: _loadPayment,
-                          child: Text("Buy Credit"),
+                          child: Text("BUY CREDIT"),
                         ),
                         MaterialButton(
                           onPressed: _registerAccount,
@@ -263,7 +288,7 @@ class _TabScreen4State extends State<TabScreen4> {
                           child: Text("LOG IN"),
                         ),
                         MaterialButton(
-                          onPressed: _logout,
+                          onPressed: _gotologout,
                           child: Text("LOG OUT"),
                         )
                       ],
@@ -272,7 +297,6 @@ class _TabScreen4State extends State<TabScreen4> {
                 }
               }),
         ));
-    return materialApp;
   }
 
   void _takePicture() async {
@@ -372,7 +396,7 @@ class _TabScreen4State extends State<TabScreen4> {
         return AlertDialog(
           title: new Text("Change new Radius (km)?"),
           content: new TextField(
-              keyboardType: TextInputType.phone,
+              keyboardType: TextInputType.number,
               controller: radiusController,
               decoration: InputDecoration(
                 labelText: 'new radius',
@@ -422,15 +446,6 @@ class _TabScreen4State extends State<TabScreen4> {
     );
   }
 
-  void _logout() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('email', '');
-    await prefs.setString('pass', '');
-    print("LOGOUT");
-    Navigator.pop(
-        context, MaterialPageRoute(builder: (context) => SplashScreen()));
-  }
-
   void _changeName() {
     TextEditingController nameController = TextEditingController();
     // flutter defined function
@@ -446,7 +461,7 @@ class _TabScreen4State extends State<TabScreen4> {
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
-          title: new Text("Change " + widget.user.name),
+          title: new Text("Change name for " + widget.user.name + "?"),
           content: new TextField(
               controller: nameController,
               decoration: InputDecoration(
@@ -474,7 +489,7 @@ class _TabScreen4State extends State<TabScreen4> {
                     print('in success');
                     setState(() {
                       widget.user.name = dres[1];
-                      });
+                    });
                     Toast.show("Success", context,
                         duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
                     Navigator.of(context).pop();
@@ -483,7 +498,7 @@ class _TabScreen4State extends State<TabScreen4> {
                 }).catchError((err) {
                   print(err);
                 });
-                 Toast.show("Failed", context,
+                Toast.show("Failed", context,
                     duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
               },
             ),
@@ -545,8 +560,8 @@ class _TabScreen4State extends State<TabScreen4> {
                       if (dres[0] == "success") {
                         Toast.show("Success", context,
                             duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-                            savepref(passController.text);
-                            Navigator.of(context).pop();
+                        savepref(passController.text);
+                        Navigator.of(context).pop();
                       }
                     });
                   } else {}
@@ -597,7 +612,7 @@ class _TabScreen4State extends State<TabScreen4> {
                 if (phoneController.text.length < 5) {
                   Toast.show("Please enter correct phone number", context,
                       duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-                      return;
+                  return;
                 }
                 http.post(urlupdate, body: {
                   "email": widget.user.email,
@@ -613,7 +628,7 @@ class _TabScreen4State extends State<TabScreen4> {
                       Navigator.of(context).pop();
                       return;
                     });
-                  } 
+                  }
                 }).catchError((err) {
                   print(err);
                 });
@@ -677,7 +692,7 @@ class _TabScreen4State extends State<TabScreen4> {
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
-          title: new Text("Go to login page? " + widget.user.name),
+          title: new Text("Go to login page?" + widget.user.name),
           content: new Text("Are your sure?"),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
@@ -742,7 +757,7 @@ class _TabScreen4State extends State<TabScreen4> {
   void savepref(String pass) async {
     print('Inside savepref');
     SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('pass', pass);
+    await prefs.setString('pass', pass);
   }
 
   void _loadPayment() async {

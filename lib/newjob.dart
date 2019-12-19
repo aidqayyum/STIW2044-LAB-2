@@ -88,7 +88,7 @@ class _CreateNewJobState extends State<CreateNewJob> {
             onTap: _choose,
             child: Container(
               width: 350,
-              height: 200,
+              height: 300,
               decoration: BoxDecoration(
                   image: DecorationImage(
                 image:
@@ -97,21 +97,6 @@ class _CreateNewJobState extends State<CreateNewJob> {
               )),
             )),
         Text('Click on image above to take item picture'),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-            children: <Widget>[
-              new IconButton(iconSize: 40, icon: new Icon(Icons.directions_bike), onPressed: _changeJob),
-                           new IconButton(iconSize: 40, icon: new Icon(Icons.fastfood), onPressed: _changeFood),
-                                                      new IconButton(iconSize: 40, icon: new Icon(Icons.directions_bike), onPressed: null),
-                                                      new IconButton(iconSize: 40, icon: new Icon(Icons.directions_bike), onPressed: null),
-                                                      new IconButton(iconSize: 40, icon: new Icon(Icons.directions_bike), onPressed: null),
-                                                      new IconButton(iconSize: 40, icon: new Icon(Icons.directions_bike), onPressed: null),
-                                                      new IconButton(iconSize: 40, icon: new Icon(Icons.directions_bike), onPressed: null),
-                                                      new IconButton(iconSize: 40, icon: new Icon(Icons.directions_bike), onPressed: null),
-                                                     ],
-                                                   ),
-                                                 ),
                                                  TextField(
                                                      controller: _jobcontroller,
                                                      keyboardType: TextInputType.emailAddress,
@@ -212,9 +197,9 @@ class _CreateNewJobState extends State<CreateNewJob> {
                                              http.post(urlUpload, body: {
                                                "encoded_string": base64Image,
                                                "email": widget.user.email,
-                                               "jobtitle": _jobcontroller.text,
-                                               "jobdesc": _desccontroller.text,
-                                               "jobprice": _pricecontroller.text,
+                                               "ettitle": _jobcontroller.text,
+                                               "etdesc": _desccontroller.text,
+                                               "etprice": _pricecontroller.text,
                                                "latitude": _currentPosition.latitude.toString(),
                                                "longitude": _currentPosition.longitude.toString(),
                                                "credit": widget.user.credit,
@@ -306,12 +291,4 @@ class _CreateNewJobState extends State<CreateNewJob> {
                                              print("MAP SHOW:");
                                              print(result);
                                            }
-                                         
-                                           void _changeJob() {
-                                             _jobcontroller.text = "Runner";
-                                           }
-                           
-                             void _changeFood() {
-                               _jobcontroller.text = "Order Food";
   }
-}

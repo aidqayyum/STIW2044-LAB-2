@@ -48,7 +48,7 @@ class _TabScreen2State extends State<TabScreen2> {
               child: Icon(Icons.add),
               backgroundColor: Colors.deepOrange,
               elevation: 2.0,
-              onPressed: requestNewJob,
+              onPressed: requestItems,
               tooltip: 'Request new help',
             ),
             body: RefreshIndicator(
@@ -66,9 +66,13 @@ class _TabScreen2State extends State<TabScreen2> {
                         child: Column(
                           children: <Widget>[
                             Stack(children: <Widget>[
-                              Image.asset(
+                              Container(
+                              child: Image.asset(
                                 "assets/images/back.png",
                                 fit: BoxFit.fitWidth,
+                                height: 200,
+                                width: 500,
+                              ),
                               ),
                               Column(
                                 children: <Widget>[
@@ -78,7 +82,7 @@ class _TabScreen2State extends State<TabScreen2> {
                                   Center(
                                     child: Text("E-Trash",
                                         style: TextStyle(
-                                            fontSize: 30,
+                                            fontSize: 24,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.black)),
                                   ),
@@ -133,7 +137,7 @@ class _TabScreen2State extends State<TabScreen2> {
                                                 ),
                                                 Flexible(
                                                   child: Text(
-                                                      "Item Radius within " +
+                                                      "Items Radius within " +
                                                           widget.user.radius +
                                                           " KM"),
                                                 ),
@@ -167,7 +171,7 @@ class _TabScreen2State extends State<TabScreen2> {
                             Container(
                               color: Colors.deepOrange,
                               child: Center(
-                                child: Text("Your Posted Jobs ",
+                                child: Text("Your Posted Items ",
                                     style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -197,9 +201,9 @@ class _TabScreen2State extends State<TabScreen2> {
                       child: Card(
                         elevation: 2,
                         child: InkWell(
-                          onLongPress: () => _onJobDelete(
-                              data[index]['jobid'].toString(),
-                              data[index]['jobtitle'].toString()),
+                          onLongPress: () => _onDelete(
+                              data[index]['etid'].toString(),
+                              data[index]['ettitle'].toString()),
                           child: Padding(
                             padding: const EdgeInsets.all(2.0),
                             child: Row(
@@ -209,18 +213,17 @@ class _TabScreen2State extends State<TabScreen2> {
                                   width: 100,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                      border: Border.all(color: Colors.white),
+                                      //border: Border.all(color: Colors.deepOrangeAccent,width:3),
                                       image: DecorationImage(
                                     fit: BoxFit.fill,
                                     image: NetworkImage(
-                                    "http://itschizo.com/aidil_qayyum/etrash/images/${data[index]['jobimage']}.jpg"
-                                  )))),
+                                      "http://itschizo.com/aidil_qayyum/etrash/images/${data[index]['etimage']}.jpg")))),
                                 Expanded(
                                   child: Container(
                                     child: Column(
                                       children: <Widget>[
                                         Text(
-                                            data[index]['jobtitle']
+                                            data[index]['ettitle']
                                                 .toString()
                                                 .toUpperCase(),
                                             style: TextStyle(
@@ -230,7 +233,7 @@ class _TabScreen2State extends State<TabScreen2> {
                                           itemCount: 5,
                                           itemSize: 12,
                                           initialRating: double.parse(
-                                              data[index]['jobrating']
+                                              data[index]['etrating']
                                                   .toString()),
                                           itemPadding: EdgeInsets.symmetric(
                                               horizontal: 2.0),
@@ -242,11 +245,11 @@ class _TabScreen2State extends State<TabScreen2> {
                                         SizedBox(
                                           height: 5,
                                         ),
-                                        Text("RM " + data[index]['jobprice']),
+                                        Text("RM " + data[index]['etprice']),
                                         SizedBox(
                                           height: 5,
                                         ),
-                                        Text(data[index]['jobtime']),
+                                        Text(data[index]['ettime']),
                                       ],
                                     ),
                                   ),
@@ -293,18 +296,18 @@ class _TabScreen2State extends State<TabScreen2> {
   }
 
   Future<String> makeRequest() async {
-    String urlLoadJobs = "http://itschizo.com/aidil_qayyum/etrash/php/load_item_user.php";
+    String urlLoadETrash = "http://itschizo.com/aidil_qayyum/etrash/php/load_item_user.php";
      ProgressDialog pr = new ProgressDialog(context,
         type: ProgressDialogType.Normal, isDismissible: false);
-        pr.style(message: "Loading All Accepted Items");
+        pr.style(message: "Loading All Posted Items");
     pr.show();
-    http.post(urlLoadJobs, body: {
+    http.post(urlLoadETrash, body: {
       "email": widget.user.email ?? "notavail",
 
     }).then((res) {
       setState(() {
         var extractdata = json.decode(res.body);
-        data = extractdata["jobs"];
+        data = extractdata["etrash"];
         perpage = (data.length / 10);
         print("data");
         print(data);
@@ -319,7 +322,7 @@ class _TabScreen2State extends State<TabScreen2> {
 
   Future init() async {
     if (widget.user.email=="user@noregister"){
-      Toast.show("Please register to view posted items", context,
+      Toast.show("Please register to view posted etrash", context,
           duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
       return;
     }else{
@@ -333,7 +336,7 @@ class _TabScreen2State extends State<TabScreen2> {
     return null;
   }
 
-  void requestNewJob() {
+  void requestItems() {
     print(widget.user.email);
     if (widget.user.email != "user@noregister") {
       Navigator.push(
@@ -343,7 +346,7 @@ class _TabScreen2State extends State<TabScreen2> {
                     user: widget.user,
                   )));
     } else {
-      Toast.show("Please Register First to request new items", context,
+      Toast.show("Please Register First To Request Items", context,
           duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
       Navigator.push(
           context,
@@ -352,19 +355,19 @@ class _TabScreen2State extends State<TabScreen2> {
     }
   }
 
-  void _onJobDelete(String jobid, String jobname) {
-    print("Delete " + jobid);
-    _showDialog(jobid, jobname);
+  void _onDelete(String etid, String etname) {
+    print("Delete " + etid);
+    _showDialog(etid, etname);
   }
 
-  void _showDialog(String jobid, String jobname) {
+  void _showDialog(String etid, String etname) {
     // flutter defined function
     showDialog(
       context: context,
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
-          title: new Text("Delete " + jobname),
+          title: new Text("Delete " + etname),
           content: new Text("Are your sure?"),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
@@ -372,7 +375,7 @@ class _TabScreen2State extends State<TabScreen2> {
               child: new Text("Yes"),
               onPressed: () {
                 Navigator.of(context).pop();
-                deleteRequest(jobid);
+                deleteRequest(etid);
               },
             ),
             new FlatButton(
@@ -387,14 +390,14 @@ class _TabScreen2State extends State<TabScreen2> {
     );
   }
 
-  Future<String> deleteRequest(String jobid) async {
-    String urlLoadJobs = "http://itschizo.com/aidil_qayyum/etrash/php/delete_item.php";
+  Future<String> deleteRequest(String etid) async {
+    String urlLoadETrash = "http://itschizo.com/aidil_qayyum/etrash/php/delete_item.php";
     ProgressDialog pr = new ProgressDialog(context,
         type: ProgressDialogType.Normal, isDismissible: false);
     pr.style(message: "Deleting Items");
     pr.show();
-    http.post(urlLoadJobs, body: {
-      "jobid": jobid,
+    http.post(urlLoadETrash, body: {
+      "etid": etid,
     }).then((res) {
       print(res.body);
       if (res.body == "success") {
