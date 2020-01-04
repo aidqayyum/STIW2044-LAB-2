@@ -70,8 +70,6 @@ class _TabScreen2State extends State<TabScreen2> {
                               child: Image.asset(
                                 "assets/images/back.png",
                                 fit: BoxFit.fitWidth,
-                                height: 200,
-                                width: 500,
                               ),
                               ),
                               Column(
@@ -80,11 +78,11 @@ class _TabScreen2State extends State<TabScreen2> {
                                     height: 20,
                                   ),
                                   Center(
-                                    child: Text("E-Trash",
+                                    child: Text("E-TRASH",
                                         style: TextStyle(
-                                            fontSize: 24,
+                                            fontSize: 40,
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.black)),
+                                            color: Colors.deepOrange)),
                                   ),
                                   SizedBox(height: 10),
                                   Container(
@@ -209,10 +207,10 @@ class _TabScreen2State extends State<TabScreen2> {
                             child: Row(
                               children: <Widget>[
                                  Container(
-                                  height: 100,
-                                  width: 100,
+                                  height: 120,
+                                  width: 110,
                                   decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
+                                    shape: BoxShape.rectangle,
                                       //border: Border.all(color: Colors.deepOrangeAccent,width:3),
                                       image: DecorationImage(
                                     fit: BoxFit.fill,

@@ -88,7 +88,7 @@ class _CreateNewJobState extends State<CreateNewJob> {
             onTap: _choose,
             child: Container(
               width: 350,
-              height: 300,
+              height: 330,
               decoration: BoxDecoration(
                   image: DecorationImage(
                 image:

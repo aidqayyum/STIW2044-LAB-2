@@ -71,11 +71,11 @@ class _TabScreen3State extends State<TabScreen3> {
                                     height: 20,
                                   ),
                                   Center(
-                                    child: Text("E-Trash",
+                                    child: Text("E-TRASH",
                                         style: TextStyle(
-                                            fontSize: 24,
+                                            fontSize: 40,
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.black)),
+                                            color: Colors.deepOrange)),
                                   ),
                                   SizedBox(height: 10),
                                   Container(
@@ -197,10 +197,10 @@ class _TabScreen3State extends State<TabScreen3> {
                             child: Row(
                               children: <Widget>[
                                  Container(
-                                  height: 100,
-                                  width: 100,
+                                  height: 120,
+                                  width: 110,
                                   decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
+                                    shape: BoxShape.rectangle,
                                       border: Border.all(color: Colors.white),
                                       image: DecorationImage(
                                     fit: BoxFit.fill,
